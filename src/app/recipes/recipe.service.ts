@@ -44,6 +44,10 @@ export class RecipeService {
 
   constructor (private slService: ShoppingListService) { }
 
+  getRecipe(index: number) {
+    return this.recipes[index];
+  }
+
   getRecipes() {
     //The slice() method returns a shallow copy of a portion of an array into a new array object selected from start to end
     //If its empty, that means it will return the entire array    
