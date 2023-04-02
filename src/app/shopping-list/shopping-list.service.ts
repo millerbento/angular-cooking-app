@@ -1,8 +1,8 @@
 import { Ingredient } from '../shared/ingredient.model';
-import { EventEmitter } from '@angular/core';
+import { Subject } from 'rxjs';
 
 export class ShoppingListService {
-  ingredientsChanged = new EventEmitter<Ingredient[]>();
+  ingredientsChanged = new Subject<Ingredient[]>();
   private ingredients: Ingredient[] = [
     new Ingredient('Apples', 5),
     new Ingredient('Tomatoes', 10),
@@ -16,12 +16,14 @@ export class ShoppingListService {
     console.log(ingredient);
     this.ingredients.push(ingredient);
     //We need to do that because we are only working with a copy of the array "ingredients.slice()"
-    this.ingredientsChanged.emit(this.ingredients.slice()); //shopping-list.component is subscribed to this
+    this.ingredientsChanged.next(this.ingredients.slice()); //shopping-list.component is subscribed to this
   }
 
   addIngredients(ingredients: Ingredient[]) {
     //... spread the ingredients into a list of ingredients instead of the whole array
     this.ingredients.push(...ingredients); 
-    this.ingredientsChanged.emit(this.ingredients.slice());
+    //RXJS: A Subject is a type of observable that allows you to multicast values 
+    //to multiple subscribers. You can emit new values to a Subject by calling its next() method. 
+    this.ingredientsChanged.next(this.ingredients.slice());
   }
 }
