@@ -25,6 +25,10 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
       );
   }
 
+  onEditItem(index: number) {
+    this.slService.startedEditing.next(index);
+  }
+
   ngOnDestroy(): void {
     //The ngOnDestroy method is implemented to unsubscribe from the subscription 
     //to prevent memory leaks when the component is destroyed.    
