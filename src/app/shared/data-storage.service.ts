@@ -12,7 +12,7 @@ export class DataStorageService {
     storeRecipes() {
         const recipes = this.recipeService.getRecipes();
         this.http.put(
-            'FIREBASE_URL/recipes.json', 
+            'https://angular-cooking-app-73178-default-rtdb.asia-southeast1.firebasedatabase.app/recipes.json', 
             recipes
             )
         .subscribe(response => {
@@ -23,7 +23,7 @@ export class DataStorageService {
     fetchRecipes() {
         return this.http
         .get<Recipe[]>(
-            'FIREBASE_URL/recipes.json'
+            'https://angular-cooking-app-73178-default-rtdb.asia-southeast1.firebasedatabase.app/recipes.json'
             )
         //map here is a rxjs operator
         .pipe(map(recipes => {
