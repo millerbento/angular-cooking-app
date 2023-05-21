@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError } from 'rxjs';
 import { Observable } from 'rxjs';
+import { firebaseApiKey } from './firebaseApiKey';
 
 interface AuthResponseData {
   kind: string;
@@ -14,7 +15,7 @@ interface AuthResponseData {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private firebaseApiKey = 'YOUR_FIREBASE_API_KEY';
+  private firebaseApiKey = firebaseApiKey;
   private signUpUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${this.firebaseApiKey}`;
   private signInUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${this.firebaseApiKey}`;
 
