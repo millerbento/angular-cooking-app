@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError } from 'rxjs';
 import { Observable } from 'rxjs';
 import { firebaseApiKey } from './firebaseApiKey';
 
-interface AuthResponseData {
+export interface AuthResponseData {
   kind: string;
   idToken: string;
   email: string;
@@ -26,31 +26,41 @@ export class AuthService {
       email: email,
       password: password,
       returnSecureToken: true
-    }).pipe(catchError(errorRes => {
-        let errorMessage = 'An unknown error occurred!';
-        if (!errorRes.error || !errorRes.error.error) {
-            return new Observable<AuthResponseData>(observer => {
-              observer.error(errorMessage);
-            });
+    }).pipe(catchError(this.handleError));
+  }
+
+  login(email: string, password: string) {
+    return this.http
+      .post<AuthResponseData>(this.signInUrl,
+        {
+          email: email,
+          password: password,
+          returnSecureToken: true
         }
-        switch (errorRes.error.error.message) {
-            case 'EMAIL_EXISTS':
-            errorMessage = 'This email exists already';
-        }
+      )
+      .pipe(catchError(this.handleError));
+  }  
+  
+  //24-05-23
+  //TODO: Login not working. Need to fix that.
+
+  private handleError(errorRes: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    if (!errorRes.error || !errorRes.error.error) {
         return new Observable<AuthResponseData>(observer => {
           observer.error(errorMessage);
         });
-    }));
-  }
-
-  login(email: string, password: string): Observable<AuthResponseData> {
-    // Generate a custom token using Firebase Admin SDK or another method
-
-    // Once you have the custom token, you can make the signInWithCustomToken request
-    // Replace 'CUSTOM_TOKEN' with the actual custom token you've generated
-    return this.http.post<AuthResponseData>(this.signInUrl, {
-      token: 'CUSTOM_TOKEN',
-      returnSecureToken: true
+    }
+    switch (errorRes.error.error.message) {
+        case 'EMAIL_EXISTS':
+          errorMessage = 'This email exists already';
+        case 'EMAIL_NOT_FOUND':
+          errorMessage = 'This email does not exist.';
+        case 'INVALID_PASSWORD':
+          errorMessage = 'This password is not correct.';
+    }
+    return new Observable<AuthResponseData>(observer => {
+      observer.error(errorMessage);
     });
   }
 }
